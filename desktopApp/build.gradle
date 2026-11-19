@@ -35,7 +35,12 @@ compose.desktop {
             //                         сертификатов, куда антивирус/прокси колледжа
             //                         вписывает свой CA — см. WindowsTrustFallback);
             //  • java.naming, jdk.unsupported, java.net.http — зависимости OkHttp/Ktor.
-            modules("jdk.crypto.ec", "jdk.crypto.mscapi", "java.naming", "jdk.unsupported", "java.net.http")
+            modules("jdk.crypto.ec", "java.naming", "jdk.unsupported", "java.net.http")
+            // jdk.crypto.mscapi существует только в Windows-JDK — на macOS/Linux
+            // jlink падает с «Module jdk.crypto.mscapi not found».
+            if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+                modules("jdk.crypto.mscapi")
+            }
 
             windows {
                 menu = true

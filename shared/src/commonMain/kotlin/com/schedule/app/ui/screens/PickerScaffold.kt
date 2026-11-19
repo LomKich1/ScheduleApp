@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -209,7 +210,14 @@ fun PickerScaffold(
                 }
             }
 
-            if (toggleOnTop) {
+            // Когда поиск полностью открыт, тумблер по высоте уже схлопнут, но его
+            // нода (с кликабельными сегментами и blockTouches) оставалась в дереве
+            // прямо над первой карточкой результатов и глотала тапы по её верху.
+            // Как и шапку в SearchHeaderZone — в этот момент убираем из композиции.
+            val toggleGone by remember(search, searchProgress) {
+                derivedStateOf { search.active && searchProgress.value >= 0.999f }
+            }
+            if (toggleOnTop && !toggleGone) {
                 // TOP: при поиске тумблер гаснет и схлопывается по высоте.
                 Column(
                     modifier = Modifier
