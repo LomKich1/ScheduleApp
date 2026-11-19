@@ -18,6 +18,12 @@ actual fun createPlatformHttpClient(
         // на Windows.
         config {
             withWindowsTrustFallback()
+            // Системный прокси (колледж): явно берём ProxySelector JVM —
+            // вместе с java.net.useSystemProxies=true (см. Main.kt) он отдаёт
+            // тот же прокси, что и браузер.
+            proxySelector(java.net.ProxySelector.getDefault())
+            // Фильтры колледжа часто ломают HTTP/2 и IPv6 — идём по HTTP/1.1.
+            protocols(listOf(okhttp3.Protocol.HTTP_1_1))
         }
     }
 }

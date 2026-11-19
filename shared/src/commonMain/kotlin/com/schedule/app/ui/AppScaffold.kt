@@ -1,6 +1,7 @@
 package com.schedule.app.ui
 
 import com.schedule.app.util.BackHandler
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -363,9 +364,26 @@ private fun AppScaffoldBody(wide: Boolean) {
         // Дим Files/Bells/пилла под живым свайп-дисмиссом Settings/групп.
         // Лежит МЕЖДУ пиллом и NavHost — пилл затемняется вместе с вкладками,
         // а едущее содержимое NavHost всегда рисуется поверх. См. DismissDimScrim.
-        DismissDimScrim(progress = deepScreenDismissProgress)
-
+        // Пока глубокий экран открыт — дим следует за живым свайпом. Когда он
+        // закрыт (в т.ч. обычной кнопкой «назад» — тогда экран закрывается
+        // через popBackStack(), а не доигрывает свайп до progress = 1), дим
+        // принудительно плавно уводится в 0 — иначе в deepScreenDismissProgress
+        // оставался последний прогресс (0f у неоткрытого свайпа) и вкладки
+        // навсегда оставались затемнёнными.
         val navDurationMs by AnimPrefs.navDurationMs.collectAsState()
+        val closeDimProgress = remember { Animatable(0f) }
+        LaunchedEffect(deepScreenOpen) {
+            if (deepScreenOpen) {
+                closeDimProgress.snapTo(0f)
+            } else {
+                deepScreenDismissProgress = 1f
+                closeDimProgress.animateTo(1f, tween(navDurationMs, easing = FastOutSlowInEasing))
+            }
+        }
+        DismissDimScrim(
+            progress = if (deepScreenOpen) deepScreenDismissProgress
+            else maxOf(deepScreenDismissProgress, closeDimProgress.value),
+        )
         NavHost(
             navController = navController,
             startDestination = TABS_PLACEHOLDER,

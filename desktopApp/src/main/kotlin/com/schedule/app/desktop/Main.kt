@@ -13,7 +13,15 @@ import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.AppScaffold
 import com.schedule.app.ui.theme.AppTheme
 
-fun main() = application {
+fun main() {
+    // Браузер в колледже ходит в сеть через системный прокси (часто с PAC/WPAD),
+    // а JVM по умолчанию его игнорирует — отсюда «сайт открывается, а файлы не
+    // качаются». Включаем системные прокси ДО первого сетевого обращения.
+    System.setProperty("java.net.useSystemProxies", "true")
+    runApp()
+}
+
+private fun runApp() = application {
     // На ПК platformHandle не нужен (нет Context) — передаём null.
     AppPrefs.init(null)
     AnimPrefs.init(null)

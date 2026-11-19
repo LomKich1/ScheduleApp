@@ -26,6 +26,17 @@ compose.desktop {
             packageName = "ScheduleApp"
             packageVersion = (project.findProperty("APP_VERSION") ?: "1.0.0").toString()
 
+            // Упакованное приложение запускается на урезанном JRE (jlink) — в нём
+            // нет модулей, которых Compose сам не просит. Без них на ПК колледжа
+            // сеть «молча» не работала:
+            //  • jdk.crypto.ec      — эллиптические шифры TLS (без них handshake
+            //                         с большинством HTTPS-серверов падает);
+            //  • jdk.crypto.mscapi  — провайдер Windows-ROOT (системное хранилище
+            //                         сертификатов, куда антивирус/прокси колледжа
+            //                         вписывает свой CA — см. WindowsTrustFallback);
+            //  • java.naming, jdk.unsupported, java.net.http — зависимости OkHttp/Ktor.
+            modules("jdk.crypto.ec", "jdk.crypto.mscapi", "java.naming", "jdk.unsupported", "java.net.http")
+
             windows {
                 menu = true
                 shortcut = true
