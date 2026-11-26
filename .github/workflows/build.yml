@@ -138,6 +138,8 @@ jobs:
       - name: Download Gradle distribution (с повторами)
         shell: bash
         run: |
+          # Бит запуска теряется, если репозиторий перезалит из архива/с телефона.
+          chmod +x gradlew
           for i in 1 2 3 4 5; do
             ./gradlew --version && exit 0
             echo "Попытка $i не удалась, ждём $((i * 15)) c…"
@@ -224,6 +226,8 @@ jobs:
       - name: Download Gradle distribution (с повторами)
         shell: bash
         run: |
+          # Бит запуска теряется, если репозиторий перезалит из архива/с телефона.
+          chmod +x gradlew
           for i in 1 2 3 4 5; do
             ./gradlew --version && exit 0
             echo "Попытка $i не удалась, ждём $((i * 15)) c…"
@@ -279,6 +283,8 @@ jobs:
       - name: Download Gradle distribution (с повторами)
         shell: bash
         run: |
+          # Бит запуска теряется, если репозиторий перезалит из архива/с телефона.
+          chmod +x gradlew
           for i in 1 2 3 4 5; do
             ./gradlew --version && exit 0
             echo "Попытка $i не удалась, ждём $((i * 15)) c…"
