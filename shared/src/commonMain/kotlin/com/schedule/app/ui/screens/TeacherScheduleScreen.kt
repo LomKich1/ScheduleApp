@@ -67,6 +67,7 @@ import com.schedule.app.data.model.TeacherLessonEntry
 import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.components.CascadeEdge
 import com.schedule.app.ui.components.CascadeEntranceItem
+import com.schedule.app.ui.components.ListCardMinHeight
 import com.schedule.app.ui.components.ScheduleMode
 import com.schedule.app.ui.components.ScheduleModeToggle
 import com.schedule.app.ui.components.DismissDimScrim
@@ -508,6 +509,7 @@ private fun TeacherCard(
         colors = CardDefaults.cardColors(containerColor = container),
     ) {
         ListItem(
+            modifier = Modifier.heightIn(min = ListCardMinHeight),
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
                 headlineColor  = nameColor,
@@ -632,8 +634,8 @@ private fun TeacherPairCard(lesson: TeacherLessonEntry, status: TeacherLessonSta
     ) {
         run {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
@@ -642,7 +644,7 @@ private fun TeacherPairCard(lesson: TeacherLessonEntry, status: TeacherLessonSta
                         color = subColor,
                         modifier = Modifier.width(28.dp).padding(top = 2.dp),
                     )
-                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         if (status.isNow || status.isNext) {
                             LessonStatusBadge(isNow = status.isNow)
                         }
@@ -670,7 +672,7 @@ private fun TeacherPairCard(lesson: TeacherLessonEntry, status: TeacherLessonSta
 
                 Column(
                     modifier = Modifier.padding(start = 44.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     if (lesson.timeStart.isNotEmpty()) {
                         PairTimeRow(time = "${lesson.timeStart}–${lesson.timeEnd}", tag = "ПАРА", muted = false, contentColor = contentColor)

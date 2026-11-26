@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.components.CascadeEdge
 import com.schedule.app.ui.components.CascadeEntranceItem
+import com.schedule.app.ui.components.GroupedListGap
+import com.schedule.app.ui.components.groupedListShape
 import com.schedule.app.ui.theme.AppTheme
 import com.schedule.app.ui.theme.LocalAppColors
 import com.schedule.app.ui.theme.ThemePreset
@@ -184,7 +187,7 @@ fun BellsScreen(entranceTrigger: Int = 0) {
 
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(GroupedListGap),
         ) {
             itemsIndexed(periods, key = { index, _ -> index }) { index, _ ->
                 CascadeEntranceItem(
@@ -202,7 +205,12 @@ fun BellsScreen(entranceTrigger: Int = 0) {
                         val isLive = dayType == todayType
                         val isNow  = isLive && nowMin in toMin(period.totalStart)..toMin(period.totalEnd)
                         val isNext = isLive && !isNow && toMin(period.totalStart) - nowMin in 1..30
-                        BellCard(period = period, isNow = isNow, isNext = isNext)
+                        BellCard(
+                            period = period,
+                            isNow = isNow,
+                            isNext = isNext,
+                            shape = groupedListShape(index, periods.size),
+                        )
                     }
                 }
             }
@@ -262,6 +270,7 @@ private fun BellCard(
     period: BellPeriod,
     isNow: Boolean,
     isNext: Boolean,
+    shape: Shape,
 ) {
     val scheme = MaterialTheme.colorScheme
 
@@ -285,7 +294,7 @@ private fun BellCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = shape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor,

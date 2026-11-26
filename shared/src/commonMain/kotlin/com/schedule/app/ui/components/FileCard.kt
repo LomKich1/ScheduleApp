@@ -2,6 +2,7 @@ package com.schedule.app.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.schedule.app.data.model.ScheduleFile
 
@@ -33,6 +35,7 @@ import com.schedule.app.data.model.ScheduleFile
 fun FileCard(
     file: ScheduleFile,
     onClick: () -> Unit,
+    shape: Shape = MaterialTheme.shapes.large,
 ) {
     val scheme = MaterialTheme.colorScheme
     val containerColor = if (file.isToday) scheme.primaryContainer else scheme.surfaceContainer
@@ -42,10 +45,11 @@ fun FileCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = containerColor),
     ) {
         ListItem(
+            modifier = Modifier.heightIn(min = ListCardMinHeight),
             colors = ListItemDefaults.colors(
                 containerColor = Color.Transparent,
                 headlineColor = contentColor,

@@ -79,7 +79,7 @@ fun PairTimeRow(time: String, tag: String, muted: Boolean, contentColor: android
                 text = tag,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp),
             )
         }
     }

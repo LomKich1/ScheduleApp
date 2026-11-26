@@ -36,6 +36,8 @@ import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.components.CascadeEdge
 import com.schedule.app.ui.components.CascadeEntranceItem
 import com.schedule.app.ui.components.FileCard
+import com.schedule.app.ui.components.GroupedListGap
+import com.schedule.app.ui.components.groupedListShape
 import com.schedule.app.ui.theme.AppRadius
 import com.schedule.app.ui.theme.AppTheme
 import com.schedule.app.ui.theme.LocalAppColors
@@ -212,7 +214,7 @@ private fun FilesList(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(GroupedListGap),
     ) {
         itemsIndexed(files, key = { _, file -> file.name }) { index, file ->
             CascadeEntranceItem(
@@ -221,7 +223,11 @@ private fun FilesList(
                 enabled    = entranceEnabled,
                 edge       = entranceEdge,
             ) {
-                FileCard(file = file, onClick = { onClick(file) })
+                FileCard(
+                    file = file,
+                    onClick = { onClick(file) },
+                    shape = groupedListShape(index, files.size),
+                )
             }
         }
     }
