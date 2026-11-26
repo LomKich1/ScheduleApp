@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -67,7 +68,9 @@ import com.schedule.app.data.model.TeacherLessonEntry
 import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.components.CascadeEdge
 import com.schedule.app.ui.components.CascadeEntranceItem
+import com.schedule.app.ui.components.GroupedListGap
 import com.schedule.app.ui.components.ListCardMinHeight
+import com.schedule.app.ui.components.groupedListShape
 import com.schedule.app.ui.components.ScheduleMode
 import com.schedule.app.ui.components.ScheduleModeToggle
 import com.schedule.app.ui.components.DismissDimScrim
@@ -264,8 +267,8 @@ fun TeacherScheduleScreen(
                     items    = ready.teachers,
                     topInsetPx    = pad.resultsTopPx,
                     bottomInsetPx = pad.resultsBottomPx,
-                ) { name ->
-                    TeacherCard(name = name) {
+                ) { name, shape ->
+                    TeacherCard(name = name, shape = shape) {
                         hideKeyboard()
                         onSelectTeacher(name)
                     }
@@ -450,9 +453,9 @@ private fun TeacherPickerScreen(
                     top = if (showHint) 2.dp else topContentPadding + 2.dp,
                 ),
             verticalArrangement = if (isShort)
-                Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                Arrangement.spacedBy(GroupedListGap, Alignment.CenterVertically)
             else
-                Arrangement.spacedBy(8.dp),
+                Arrangement.spacedBy(GroupedListGap),
         ) {
             teachers.forEachIndexed { idx, teacher ->
                 CascadeEntranceItem(
@@ -462,7 +465,10 @@ private fun TeacherPickerScreen(
                     edge       = entranceEdge,
                     viewportBoundsPx = { viewportBoundsPx },
                 ) {
-                    TeacherCard(name = teacher) { onSelect(teacher) }
+                    TeacherCard(
+                        name = teacher,
+                        shape = groupedListShape(idx, teachers.size),
+                    ) { onSelect(teacher) }
                 }
             }
         }
@@ -497,6 +503,7 @@ private fun TeacherPickerHint(count: Int, topPadding: Dp = 0.dp) {
 @Composable
 private fun TeacherCard(
     name: String,
+    shape: Shape,
     onClick: () -> Unit,
 ) {
     val scheme    = MaterialTheme.colorScheme
@@ -505,7 +512,7 @@ private fun TeacherCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = container),
     ) {
         ListItem(

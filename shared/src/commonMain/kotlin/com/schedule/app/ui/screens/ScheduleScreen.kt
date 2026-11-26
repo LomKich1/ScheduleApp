@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -68,7 +69,9 @@ import com.schedule.app.data.model.ScheduleFile
 import com.schedule.app.data.prefs.AppPrefs
 import com.schedule.app.ui.components.CascadeEdge
 import com.schedule.app.ui.components.CascadeEntranceItem
+import com.schedule.app.ui.components.GroupedListGap
 import com.schedule.app.ui.components.ListCardMinHeight
+import com.schedule.app.ui.components.groupedListShape
 import com.schedule.app.ui.components.ScheduleMode
 import com.schedule.app.ui.components.ScheduleModeToggle
 import com.schedule.app.ui.components.DismissDimScrim
@@ -326,8 +329,8 @@ fun ScheduleScreen(
                     items    = ready.groups,
                     topInsetPx    = pad.resultsTopPx,
                     bottomInsetPx = pad.resultsBottomPx,
-                ) { name ->
-                    GroupCard(name = name, isPinned = false) {
+                ) { name, shape ->
+                    GroupCard(name = name, isPinned = false, shape = shape) {
                         hideKeyboard()
                         onSelectGroup(name)
                     }
@@ -573,9 +576,9 @@ private fun GroupPickerScreen(
                     top = if (showHint) 2.dp else topContentPadding + 2.dp,
                 ),
             verticalArrangement = if (isShort)
-                Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+                Arrangement.spacedBy(GroupedListGap, Alignment.CenterVertically)
             else
-                Arrangement.spacedBy(8.dp),
+                Arrangement.spacedBy(GroupedListGap),
         ) {
             orderedGroups.forEachIndexed { idx, group ->
                 CascadeEntranceItem(
@@ -585,7 +588,11 @@ private fun GroupPickerScreen(
                     edge       = entranceEdge,
                     viewportBoundsPx = { viewportBoundsPx },
                 ) {
-                    GroupCard(name = group, isPinned = group == pinnedInFile) { onSelect(group) }
+                    GroupCard(
+                        name = group,
+                        isPinned = group == pinnedInFile,
+                        shape = groupedListShape(idx, orderedGroups.size),
+                    ) { onSelect(group) }
                 }
             }
         }
@@ -599,6 +606,7 @@ private fun GroupPickerScreen(
 private fun GroupCard(
     name: String,
     isPinned: Boolean,
+    shape: Shape,
     onClick: () -> Unit,
 ) {
     val scheme    = MaterialTheme.colorScheme
@@ -607,7 +615,7 @@ private fun GroupCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = container),
     ) {
         ListItem(

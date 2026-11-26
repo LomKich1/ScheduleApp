@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
@@ -458,7 +459,7 @@ fun SearchResultsLayer(
     // рекомпозицию списка результатов на каждый кадр.
     topInsetPx: () -> Int = { 0 },
     bottomInsetPx: Density.() -> Int = { 0 },
-    card: @Composable (String) -> Unit,
+    card: @Composable (name: String, shape: Shape) -> Unit,
 ) {
     val c = LocalAppColors.current
     val hideKeyboard = rememberHideKeyboard()
@@ -491,7 +492,7 @@ fun SearchResultsLayer(
                 .nestedScroll(hideOnScroll)
                 .verticalScroll(rememberScrollState())
                 .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(GroupedListGap),
         ) {
             if (query.isNotBlank() && matches.isEmpty()) {
                 Text(
@@ -501,7 +502,9 @@ fun SearchResultsLayer(
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
                 )
             }
-            matches.forEach { card(it) }
+            matches.forEachIndexed { index, name ->
+                card(name, groupedListShape(index, matches.size))
+            }
         }
     }
 }
